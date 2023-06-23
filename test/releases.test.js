@@ -266,14 +266,12 @@ describe('releases', () => {
       }
       const targetCommitish = 'refs/heads/master'
       const filterByCommitish = ''
-      const isPrerelease = false
       const tagPrefix = 'test-'
 
       const { lastRelease } = await findReleases({
         context,
         targetCommitish,
         filterByCommitish,
-        isPrerelease,
         tagPrefix,
       })
       expect(lastRelease.tag_name).toEqual('test-1.0.1')
@@ -300,7 +298,6 @@ describe('releases', () => {
       const { lastRelease } = await findReleases({
         context,
         targetCommitish: 'refs/heads/master',
-        isPreRelease: false,
         tagPrefix: '',
       })
 
@@ -321,7 +318,7 @@ describe('releases', () => {
       const { draftRelease } = await findReleases({
         context,
         targetCommitish: 'refs/heads/master',
-        isPreRelease: false,
+        includePreReleases: false,
         tagPrefix: '',
       })
 
@@ -343,7 +340,6 @@ describe('releases', () => {
         context,
         targetCommitish: 'refs/heads/master',
         tagPrefix: '',
-        isPreRelease: true,
         includePreReleases: true,
       })
 
