@@ -266,12 +266,14 @@ describe('releases', () => {
       }
       const targetCommitish = 'refs/heads/master'
       const filterByCommitish = ''
+      const isPrerelease = false
       const tagPrefix = 'test-'
 
       const { lastRelease } = await findReleases({
         context,
         targetCommitish,
         filterByCommitish,
+        isPrerelease,
         tagPrefix,
       })
       expect(lastRelease.tag_name).toEqual('test-1.0.1')
@@ -298,6 +300,7 @@ describe('releases', () => {
       const { lastRelease } = await findReleases({
         context,
         targetCommitish: 'refs/heads/master',
+        isPreRelease: false,
         tagPrefix: '',
       })
 
@@ -318,6 +321,7 @@ describe('releases', () => {
       const { draftRelease } = await findReleases({
         context,
         targetCommitish: 'refs/heads/master',
+        isPreRelease: false,
         tagPrefix: '',
       })
 
@@ -332,20 +336,27 @@ describe('releases', () => {
       paginateMock.mockResolvedValueOnce([
         { tag_name: 'v1.0.0', draft: true, prerelease: false },
         { tag_name: 'v1.0.1', draft: false, prerelease: false },
-        { tag_name: 'v1.0.2-rc.1', draft: false, prerelease: true },
+        { tag_name: 'v1.0.2-rc.1', draft: true, prerelease: true },
       ])
 
-      const { lastRelease } = await findReleases({
+      const { draftRelease, lastRelease } = await findReleases({
         context,
         targetCommitish: 'refs/heads/master',
         tagPrefix: '',
+        isPreRelease: true,
         includePreReleases: true,
       })
 
-      expect(lastRelease).toEqual({
+      expect(draftRelease).toEqual({
         tag_name: 'v1.0.2-rc.1',
-        draft: false,
+        draft: true,
         prerelease: true,
+      })
+
+      expect(lastRelease).toEqual({
+        tag_name: 'v1.0.1',
+        draft: false,
+        prerelease: false,
       })
     })
   })
